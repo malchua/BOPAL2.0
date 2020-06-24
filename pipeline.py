@@ -32,6 +32,7 @@ trans_pValue = 0.0
 testFolder = ""
 
 runDupLoss = False
+runOrthoAlign = False
 
 def main():
     global probDup
@@ -46,12 +47,11 @@ def main():
     global testFolder
 
     global runDupLoss
+    global runOrthoAlign
     
     cherryTree = False
     neighbour = False
     equalEvents = False
-
-    runOrthoAlign = False
 
     if len(sys.argv) < 3:
         print "WARNING: Must provide a file for testing. Exiting..."
@@ -97,7 +97,13 @@ def main():
     xAxis = []
     baseCommand = 'python Run_2-SPP_OrthoAlign.py -f '
     if runDupLoss:
-        baseCommand = 'python Run_2-SPP_OrthoAlign.py -fd '
+        if runOrthoAlign:
+            baseCommand = 'python Run_2-SPP_OrthoAlign.py -fdo '
+        else:
+            baseCommand = 'python Run_2-SPP_OrthoAlign.py -fd '
+    else:
+        if runOrthoAlign:
+            baseCommand = 'python Run_2-SPP_OrthoAlign.py -fo '
     
     testingFile = open(testFile, "r")
     testDiff = testingFile.readline().strip()
@@ -207,24 +213,28 @@ def main():
     for test in tests:
         numEventsAppAveragesList = []
         numEventsGenAveragesList = []
-        numEventsOrthoAveragesList = []
+        if runOrthoAlign:
+            numEventsOrthoAveragesList = []
         if runDupLoss:
             numEventsDupAveragesList = []
         numEventsAppNeighbourAveragesList = []
-        numEventsOrthoNeighbourAveragesList = []
+        if runOrthoAlign:
+            numEventsOrthoNeighbourAveragesList = []
         
         strictAppAccuracyAveragesList = []
         relaxedAppAccuracyAveragesList = []
-        strictOrthoAccuracyAveragesList = []
-        relaxedOrthoAccuracyAveragesList = []
+        if runOrthoAlign:
+            strictOrthoAccuracyAveragesList = []
+            relaxedOrthoAccuracyAveragesList = []
         if runDupLoss:
             strictDupAccuracyAveragesList = []
             relaxedDupAccuracyAveragesList = []
         
         strictAppNeighbourAccuracyAveragesList = []
         relaxedAppNeighbourAccuracyAveragesList = []
-        strictOrthoNeighbourAccuracyAveragesList = []
-        relaxedOrthoNeighbourAccuracyAveragesList = []
+        if runOrthoAlign:
+            strictOrthoNeighbourAccuracyAveragesList = []
+            relaxedOrthoNeighbourAccuracyAveragesList = []
         
         #App accuracies for different event types
         strictAppDupAccuracyAveragesList = []
@@ -241,18 +251,19 @@ def main():
         relaxedAppSubAccuracyAveragesList = []
         
         #orthoAlign accuracies for different event types
-        strictOrthoDupAccuracyAveragesList = []
-        relaxedOrthoDupAccuracyAveragesList = []
-        strictOrthoLossAccuracyAveragesList = []
-        relaxedOrthoLossAccuracyAveragesList = []
-        strictOrthoInvAccuracyAveragesList = []
-        relaxedOrthoInvAccuracyAveragesList = []
-        strictOrthoTransAccuracyAveragesList = []
-        relaxedOrthoTransAccuracyAveragesList = []
-#        strictOrthoInvTransAccuracyAveragesList = []
-#        relaxedOrthoInvTransAccuracyAveragesList = []
-        strictOrthoSubAccuracyAveragesList = []
-        relaxedOrthoSubAccuracyAveragesList = []
+        if runOrthoAlign:
+            strictOrthoDupAccuracyAveragesList = []
+            relaxedOrthoDupAccuracyAveragesList = []
+            strictOrthoLossAccuracyAveragesList = []
+            relaxedOrthoLossAccuracyAveragesList = []
+            strictOrthoInvAccuracyAveragesList = []
+            relaxedOrthoInvAccuracyAveragesList = []
+            strictOrthoTransAccuracyAveragesList = []
+            relaxedOrthoTransAccuracyAveragesList = []
+    #        strictOrthoInvTransAccuracyAveragesList = []
+    #        relaxedOrthoInvTransAccuracyAveragesList = []
+            strictOrthoSubAccuracyAveragesList = []
+            relaxedOrthoSubAccuracyAveragesList = []
         
         #duploss accuracies for different event types
         if runDupLoss:
@@ -284,26 +295,29 @@ def main():
         relaxedAppNeighbourSubAccuracyAveragesList = []
         
         #orthoNeighbour accuracies for different event types
-        strictOrthoNeighbourDupAccuracyAveragesList = []
-        relaxedOrthoNeighbourDupAccuracyAveragesList = []
-        strictOrthoNeighbourLossAccuracyAveragesList = []
-        relaxedOrthoNeighbourLossAccuracyAveragesList = []
-        strictOrthoNeighbourInvAccuracyAveragesList = []
-        relaxedOrthoNeighbourInvAccuracyAveragesList = []
-        strictOrthoNeighbourTransAccuracyAveragesList = []
-        relaxedOrthoNeighbourTransAccuracyAveragesList = []
-#        strictOrthoNeighbourInvTransAccuracyAveragesList = []
-#        relaxedOrthoNeighbourInvTransAccuracyAveragesList = []
-        strictOrthoNeighbourSubAccuracyAveragesList = []
-        relaxedOrthoNeighbourSubAccuracyAveragesList = []
+        if runOrthoAlign:
+            strictOrthoNeighbourDupAccuracyAveragesList = []
+            relaxedOrthoNeighbourDupAccuracyAveragesList = []
+            strictOrthoNeighbourLossAccuracyAveragesList = []
+            relaxedOrthoNeighbourLossAccuracyAveragesList = []
+            strictOrthoNeighbourInvAccuracyAveragesList = []
+            relaxedOrthoNeighbourInvAccuracyAveragesList = []
+            strictOrthoNeighbourTransAccuracyAveragesList = []
+            relaxedOrthoNeighbourTransAccuracyAveragesList = []
+    #        strictOrthoNeighbourInvTransAccuracyAveragesList = []
+    #        relaxedOrthoNeighbourInvTransAccuracyAveragesList = []
+            strictOrthoNeighbourSubAccuracyAveragesList = []
+            relaxedOrthoNeighbourSubAccuracyAveragesList = []
         
         appFMeasureList = []
-        orthoFMeasureList = []
+        if runOrthoAlign:
+            orthoFMeasureList = []
         if runDupLoss:
             dupFMeasureList = []
         
         appNeighbourFMeasureList = []
-        orthoNeighbourFMeasureList = []
+        if runOrthoAlign:
+            orthoNeighbourFMeasureList = []
         
         testRunTimes = []
         
@@ -446,17 +460,18 @@ def main():
                 else:
                     genRootFile = testSetDir + "/root.txt"
                 
-                with open(orthoAlignOutFile, "r") as f:
-                    line = f.readline()
-                    while line:
-                        splitted = line.split("ost = ")
-                        if len(splitted) > 1:
-                            orthoCost = float(splitted[1])
-                            line = f.readline()
-                        if line.strip() == ">Ancestor:":
-                            orthoAncestor = f.readline().strip()
-                            break
+                if runOrthoAlign:
+                    with open(orthoAlignOutFile, "r") as f:
                         line = f.readline()
+                        while line:
+                            splitted = line.split("ost = ")
+                            if len(splitted) > 1:
+                                orthoCost = float(splitted[1])
+                                line = f.readline()
+                            if line.strip() == ">Ancestor:":
+                                orthoAncestor = f.readline().strip()
+                                break
+                            line = f.readline()
                         
                 if runDupLoss:
                     with open(duplossOutFile, "r") as f:
@@ -477,55 +492,60 @@ def main():
                 with open(genRootFile, "r") as f:
                     genAncestor = f.readline()
                 
-                numEventsOrthoAveragesList.append(orthoCost)
+                if runOrthoAlign:
+                    numEventsOrthoAveragesList.append(orthoCost)
                 if runDupLoss:
                     numEventsDupAveragesList.append(dupCost)
                 if printToConsole:
-                    print orthoCost
-                    print dupCost
+                    if runOrthoAlign:
+                        print orthoCost
+                    if runDupLoss:
+                        print dupCost
                     print orthoAncestor
                     print genAncestor
                 
-                orthoRecall, orthoPrecision, orthofMeasure = compareAnc(orthoAncestor, genAncestor, testSetDir + "/ortho-")
+                if runOrthoAlign:
+                    orthoRecall, orthoPrecision, orthofMeasure = compareAnc(orthoAncestor, genAncestor, testSetDir + "/ortho-")
+                    orthoFMeasureList.append(orthofMeasure)
                 appRecall, appPrecision, appfMeasure = compareAnc(appAncestor, genAncestor, testSetDir + "/app-")
                 if runDupLoss:
                     dupRecall, dupPrecision, dupfMeasure = compareAnc(dupAncestor, genAncestor, testSetDir + "/dup-")
                     dupFMeasureList.append(dupfMeasure)
                 appFMeasureList.append(appfMeasure)
-                orthoFMeasureList.append(orthofMeasure)
                 
-                outputEvents(testSetDir + "/orthoAlign.out", testSetDir + "/orthoAlignEvents.out")                
-                totalOrthoEventsFound, totalOrthoEventsExpected, totalOrthoGenesFound, totalOrthoGenesExpected, totalOrthoEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'orthoAlignEvents.out', 'generatorOutput.txt', 'ortho-')
-                strictOrthoDupEventAccuracy, relaxedOrthoDupEventAccuracy = calculateAccuracy(duplicationTotals[0], duplicationTotals[1], duplicationTotals[2], duplicationTotals[3])
-                strictOrthoLossEventAccuracy, relaxedOrthoLossEventAccuracy = calculateAccuracy(lossTotals[0], lossTotals[1], lossTotals[2], lossTotals[3])
-                strictOrthoInvEventAccuracy, relaxedOrthoInvEventAccuracy = calculateAccuracy(inversionTotals[0], inversionTotals[1], inversionTotals[2], inversionTotals[3])
-                strictOrthoTransEventAccuracy, relaxedOrthoTransEventAccuracy = calculateAccuracy(transpositionTotals[0], transpositionTotals[1], transpositionTotals[2], transpositionTotals[3])
-                strictOrthoSubEventAccuracy, relaxedOrthoSubEventAccuracy = calculateAccuracy(substitutionTotals[0], substitutionTotals[1], substitutionTotals[2], substitutionTotals[3])
-                
-                if printToConsole:
-                    print('Events Found: %s Events Expected: %s Genes Found: %s Genes Expected: %s Total App Events: %s' % (totalOrthoEventsFound, totalOrthoEventsExpected, totalOrthoGenesFound, totalOrthoGenesExpected, totalOrthoEvents))
-                if totalOrthoEventsExpected > 0:
-                    strictOrthoEventAccuracy = float(totalOrthoEventsFound)/float(totalOrthoEventsExpected) * 100.0
-                else:
-                    strictOrthoEventAccuracy = 0.0
-                if totalOrthoGenesExpected > 0:
-                    relaxedOrthoEventAccuracy = float(totalOrthoGenesFound)/float(totalOrthoGenesExpected) * 100.0
-                else:
-                    relaxedOrthoEventAccuracy = 0.0
+                if runOrthoAlign:
+                    outputEvents(testSetDir + "/orthoAlign.out", testSetDir + "/orthoAlignEvents.out")                
+                    totalOrthoEventsFound, totalOrthoEventsExpected, totalOrthoGenesFound, totalOrthoGenesExpected, totalOrthoEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'orthoAlignEvents.out', 'generatorOutput.txt', 'ortho-')
+                    strictOrthoDupEventAccuracy, relaxedOrthoDupEventAccuracy = calculateAccuracy(duplicationTotals[0], duplicationTotals[1], duplicationTotals[2], duplicationTotals[3])
+                    strictOrthoLossEventAccuracy, relaxedOrthoLossEventAccuracy = calculateAccuracy(lossTotals[0], lossTotals[1], lossTotals[2], lossTotals[3])
+                    strictOrthoInvEventAccuracy, relaxedOrthoInvEventAccuracy = calculateAccuracy(inversionTotals[0], inversionTotals[1], inversionTotals[2], inversionTotals[3])
+                    strictOrthoTransEventAccuracy, relaxedOrthoTransEventAccuracy = calculateAccuracy(transpositionTotals[0], transpositionTotals[1], transpositionTotals[2], transpositionTotals[3])
+                    strictOrthoSubEventAccuracy, relaxedOrthoSubEventAccuracy = calculateAccuracy(substitutionTotals[0], substitutionTotals[1], substitutionTotals[2], substitutionTotals[3])
+                    
+                    if printToConsole:
+                        print('Events Found: %s Events Expected: %s Genes Found: %s Genes Expected: %s Total App Events: %s' % (totalOrthoEventsFound, totalOrthoEventsExpected, totalOrthoGenesFound, totalOrthoGenesExpected, totalOrthoEvents))
+                    if totalOrthoEventsExpected > 0:
+                        strictOrthoEventAccuracy = float(totalOrthoEventsFound)/float(totalOrthoEventsExpected) * 100.0
+                    else:
+                        strictOrthoEventAccuracy = 0.0
+                    if totalOrthoGenesExpected > 0:
+                        relaxedOrthoEventAccuracy = float(totalOrthoGenesFound)/float(totalOrthoGenesExpected) * 100.0
+                    else:
+                        relaxedOrthoEventAccuracy = 0.0
 
-                strictOrthoAccuracyAveragesList.append(strictOrthoEventAccuracy)
-                relaxedOrthoAccuracyAveragesList.append(relaxedOrthoEventAccuracy)
-                
-                strictOrthoDupAccuracyAveragesList.append(strictOrthoDupEventAccuracy)
-                relaxedOrthoDupAccuracyAveragesList.append(relaxedOrthoDupEventAccuracy)
-                strictOrthoLossAccuracyAveragesList.append(strictOrthoLossEventAccuracy)
-                relaxedOrthoLossAccuracyAveragesList.append(relaxedOrthoLossEventAccuracy)
-                strictOrthoInvAccuracyAveragesList.append(strictOrthoInvEventAccuracy)
-                relaxedOrthoInvAccuracyAveragesList.append(relaxedOrthoInvEventAccuracy)
-                strictOrthoTransAccuracyAveragesList.append(strictOrthoTransEventAccuracy)
-                relaxedOrthoTransAccuracyAveragesList.append(relaxedOrthoTransEventAccuracy)
-                strictOrthoSubAccuracyAveragesList.append(strictOrthoSubEventAccuracy)
-                relaxedOrthoSubAccuracyAveragesList.append(relaxedOrthoSubEventAccuracy)
+                    strictOrthoAccuracyAveragesList.append(strictOrthoEventAccuracy)
+                    relaxedOrthoAccuracyAveragesList.append(relaxedOrthoEventAccuracy)
+                    
+                    strictOrthoDupAccuracyAveragesList.append(strictOrthoDupEventAccuracy)
+                    relaxedOrthoDupAccuracyAveragesList.append(relaxedOrthoDupEventAccuracy)
+                    strictOrthoLossAccuracyAveragesList.append(strictOrthoLossEventAccuracy)
+                    relaxedOrthoLossAccuracyAveragesList.append(relaxedOrthoLossEventAccuracy)
+                    strictOrthoInvAccuracyAveragesList.append(strictOrthoInvEventAccuracy)
+                    relaxedOrthoInvAccuracyAveragesList.append(relaxedOrthoInvEventAccuracy)
+                    strictOrthoTransAccuracyAveragesList.append(strictOrthoTransEventAccuracy)
+                    relaxedOrthoTransAccuracyAveragesList.append(relaxedOrthoTransEventAccuracy)
+                    strictOrthoSubAccuracyAveragesList.append(strictOrthoSubEventAccuracy)
+                    relaxedOrthoSubAccuracyAveragesList.append(relaxedOrthoSubEventAccuracy)
                 
                 if runDupLoss:
                     outputEvents(testSetDir + "/duploss.out", testSetDir + "/duplossEvents.out")
@@ -626,64 +646,65 @@ def main():
                     genome3 = cleanUpGenomes(genome3)
                     
                     #Running Duploss with neighbour
-                    command = "java -classpath " + ORTHOALIGN_PATH + " " + ORTHOALIGN_EXEC + " -dt " + genome1 + " " + genome2 + " " + genome3 + " > " + testSetDir + "/orthoAlignNeighbour.out"
-                    orthoNeighbourStartTime = time.time()
-                    os.system(command)
-                    orthoNeighbourRunTime = time.time() - orthoNeighbourStartTime
-                    
-                    with open(testFolder + "/OrthoNeighbourRuntimes.txt", "a+") as runtimeFile:
-                        runtimeFile.write("%f " % (orthoNeighbourRunTime))
-                    
-                    orthoAlignNeighbourOutFile = testSetDir + "/orthoAlignNeighbour.out"
-                    
-                    with open(orthoAlignNeighbourOutFile, "r") as f:
-                        line = f.readline()
-                        while line:
-                            splitted = line.split("ost = ")
-                            if len(splitted) > 1:
-                                orthoNeighbourCost = float(splitted[1])
-                                line = f.readline()
-                            if line.strip() == ">Ancestor:":
-                                orthoNeighbourAncestor = f.readline().strip()
-                                break
+                    if runOrthoAlign:
+                        command = "java -classpath " + ORTHOALIGN_PATH + " " + ORTHOALIGN_EXEC + " -dt " + genome1 + " " + genome2 + " " + genome3 + " > " + testSetDir + "/orthoAlignNeighbour.out"
+                        orthoNeighbourStartTime = time.time()
+                        os.system(command)
+                        orthoNeighbourRunTime = time.time() - orthoNeighbourStartTime
+                        
+                        with open(testFolder + "/OrthoNeighbourRuntimes.txt", "a+") as runtimeFile:
+                            runtimeFile.write("%f " % (orthoNeighbourRunTime))
+                        
+                        orthoAlignNeighbourOutFile = testSetDir + "/orthoAlignNeighbour.out"
+                        
+                        with open(orthoAlignNeighbourOutFile, "r") as f:
                             line = f.readline()
-                            
-                    numEventsOrthoNeighbourAveragesList.append(orthoNeighbourCost)
-                    orthoNeighbourRecall, orthoNeighbourPrecision, orthoNeighbourfMeasure = compareAnc(orthoNeighbourAncestor, genAncestor, testSetDir + "/orthoNeighbour-")
-                    orthoNeighbourFMeasureList.append(orthoNeighbourfMeasure)
-                    
-                    outputEvents(testSetDir + "/orthoAlignNeighbour.out", testSetDir + "/orthoAlignNeighbourEvents.out")                
-                    totalOrthoNeighbourEventsFound, totalOrthoNeighbourEventsExpected, totalOrthoNeighbourGenesFound, totalOrthoNeighbourGenesExpected, totalOrthoNeighbourEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'orthoAlignNeighbourEvents.out', 'generatorOutput.txt', 'orthoNeighbour-')
-                    strictOrthoNeighbourDupEventAccuracy, relaxedOrthoNeighbourDupEventAccuracy = calculateAccuracy(duplicationTotals[0], duplicationTotals[1], duplicationTotals[2], duplicationTotals[3])
-                    strictOrthoNeighbourLossEventAccuracy, relaxedOrthoNeighbourLossEventAccuracy = calculateAccuracy(lossTotals[0], lossTotals[1], lossTotals[2], lossTotals[3])
-                    strictOrthoNeighbourInvEventAccuracy, relaxedOrthoNeighbourInvEventAccuracy = calculateAccuracy(inversionTotals[0], inversionTotals[1], inversionTotals[2], inversionTotals[3])
-                    strictOrthoNeighbourTransEventAccuracy, relaxedOrthoNeighbourTransEventAccuracy = calculateAccuracy(transpositionTotals[0], transpositionTotals[1], transpositionTotals[2], transpositionTotals[3])
-                    strictOrthoNeighbourSubEventAccuracy, relaxedOrthoNeighbourSubEventAccuracy = calculateAccuracy(substitutionTotals[0], substitutionTotals[1], substitutionTotals[2], substitutionTotals[3])
-                    
-                    if printToConsole:
-                        print('Events Found: %s Events Expected: %s Genes Found: %s Genes Expected: %s Total App Events: %s' % (totalOrthoNeighbourEventsFound, totalOrthoNeighbourEventsExpected, totalOrthoNeighbourGenesFound, totalOrthoNeighbourGenesExpected, totalOrthoNeighbourEvents))
-                    if totalOrthoNeighbourEventsExpected > 0:
-                        strictOrthoNeighbourEventAccuracy = float(totalOrthoNeighbourEventsFound)/float(totalOrthoNeighbourEventsExpected) * 100.0
-                    else:
-                        strictOrthoNeighbourEventAccuracy = 0.0
-                    if totalOrthoNeighbourGenesExpected > 0:
-                        relaxedOrthoNeighbourEventAccuracy = float(totalOrthoNeighbourGenesFound)/float(totalOrthoNeighbourGenesExpected) * 100.0
-                    else:
-                        relaxedOrthoNeighbourEventAccuracy = 0.0
-    
-                    strictOrthoNeighbourAccuracyAveragesList.append(strictOrthoNeighbourEventAccuracy)
-                    relaxedOrthoNeighbourAccuracyAveragesList.append(relaxedOrthoNeighbourEventAccuracy)
-                    
-                    strictOrthoNeighbourDupAccuracyAveragesList.append(strictOrthoNeighbourDupEventAccuracy)
-                    relaxedOrthoNeighbourDupAccuracyAveragesList.append(relaxedOrthoNeighbourDupEventAccuracy)
-                    strictOrthoNeighbourLossAccuracyAveragesList.append(strictOrthoNeighbourLossEventAccuracy)
-                    relaxedOrthoNeighbourLossAccuracyAveragesList.append(relaxedOrthoNeighbourLossEventAccuracy)
-                    strictOrthoNeighbourInvAccuracyAveragesList.append(strictOrthoNeighbourInvEventAccuracy)
-                    relaxedOrthoNeighbourInvAccuracyAveragesList.append(relaxedOrthoNeighbourInvEventAccuracy)
-                    strictOrthoNeighbourTransAccuracyAveragesList.append(strictOrthoNeighbourTransEventAccuracy)
-                    relaxedOrthoNeighbourTransAccuracyAveragesList.append(relaxedOrthoNeighbourTransEventAccuracy)
-                    strictOrthoNeighbourSubAccuracyAveragesList.append(strictOrthoNeighbourSubEventAccuracy)
-                    relaxedOrthoNeighbourSubAccuracyAveragesList.append(relaxedOrthoNeighbourSubEventAccuracy)
+                            while line:
+                                splitted = line.split("ost = ")
+                                if len(splitted) > 1:
+                                    orthoNeighbourCost = float(splitted[1])
+                                    line = f.readline()
+                                if line.strip() == ">Ancestor:":
+                                    orthoNeighbourAncestor = f.readline().strip()
+                                    break
+                                line = f.readline()
+                                
+                        numEventsOrthoNeighbourAveragesList.append(orthoNeighbourCost)
+                        orthoNeighbourRecall, orthoNeighbourPrecision, orthoNeighbourfMeasure = compareAnc(orthoNeighbourAncestor, genAncestor, testSetDir + "/orthoNeighbour-")
+                        orthoNeighbourFMeasureList.append(orthoNeighbourfMeasure)
+                        
+                        outputEvents(testSetDir + "/orthoAlignNeighbour.out", testSetDir + "/orthoAlignNeighbourEvents.out")                
+                        totalOrthoNeighbourEventsFound, totalOrthoNeighbourEventsExpected, totalOrthoNeighbourGenesFound, totalOrthoNeighbourGenesExpected, totalOrthoNeighbourEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'orthoAlignNeighbourEvents.out', 'generatorOutput.txt', 'orthoNeighbour-')
+                        strictOrthoNeighbourDupEventAccuracy, relaxedOrthoNeighbourDupEventAccuracy = calculateAccuracy(duplicationTotals[0], duplicationTotals[1], duplicationTotals[2], duplicationTotals[3])
+                        strictOrthoNeighbourLossEventAccuracy, relaxedOrthoNeighbourLossEventAccuracy = calculateAccuracy(lossTotals[0], lossTotals[1], lossTotals[2], lossTotals[3])
+                        strictOrthoNeighbourInvEventAccuracy, relaxedOrthoNeighbourInvEventAccuracy = calculateAccuracy(inversionTotals[0], inversionTotals[1], inversionTotals[2], inversionTotals[3])
+                        strictOrthoNeighbourTransEventAccuracy, relaxedOrthoNeighbourTransEventAccuracy = calculateAccuracy(transpositionTotals[0], transpositionTotals[1], transpositionTotals[2], transpositionTotals[3])
+                        strictOrthoNeighbourSubEventAccuracy, relaxedOrthoNeighbourSubEventAccuracy = calculateAccuracy(substitutionTotals[0], substitutionTotals[1], substitutionTotals[2], substitutionTotals[3])
+                        
+                        if printToConsole:
+                            print('Events Found: %s Events Expected: %s Genes Found: %s Genes Expected: %s Total App Events: %s' % (totalOrthoNeighbourEventsFound, totalOrthoNeighbourEventsExpected, totalOrthoNeighbourGenesFound, totalOrthoNeighbourGenesExpected, totalOrthoNeighbourEvents))
+                        if totalOrthoNeighbourEventsExpected > 0:
+                            strictOrthoNeighbourEventAccuracy = float(totalOrthoNeighbourEventsFound)/float(totalOrthoNeighbourEventsExpected) * 100.0
+                        else:
+                            strictOrthoNeighbourEventAccuracy = 0.0
+                        if totalOrthoNeighbourGenesExpected > 0:
+                            relaxedOrthoNeighbourEventAccuracy = float(totalOrthoNeighbourGenesFound)/float(totalOrthoNeighbourGenesExpected) * 100.0
+                        else:
+                            relaxedOrthoNeighbourEventAccuracy = 0.0
+        
+                        strictOrthoNeighbourAccuracyAveragesList.append(strictOrthoNeighbourEventAccuracy)
+                        relaxedOrthoNeighbourAccuracyAveragesList.append(relaxedOrthoNeighbourEventAccuracy)
+                        
+                        strictOrthoNeighbourDupAccuracyAveragesList.append(strictOrthoNeighbourDupEventAccuracy)
+                        relaxedOrthoNeighbourDupAccuracyAveragesList.append(relaxedOrthoNeighbourDupEventAccuracy)
+                        strictOrthoNeighbourLossAccuracyAveragesList.append(strictOrthoNeighbourLossEventAccuracy)
+                        relaxedOrthoNeighbourLossAccuracyAveragesList.append(relaxedOrthoNeighbourLossEventAccuracy)
+                        strictOrthoNeighbourInvAccuracyAveragesList.append(strictOrthoNeighbourInvEventAccuracy)
+                        relaxedOrthoNeighbourInvAccuracyAveragesList.append(relaxedOrthoNeighbourInvEventAccuracy)
+                        strictOrthoNeighbourTransAccuracyAveragesList.append(strictOrthoNeighbourTransEventAccuracy)
+                        relaxedOrthoNeighbourTransAccuracyAveragesList.append(relaxedOrthoNeighbourTransEventAccuracy)
+                        strictOrthoNeighbourSubAccuracyAveragesList.append(strictOrthoNeighbourSubEventAccuracy)
+                        relaxedOrthoNeighbourSubAccuracyAveragesList.append(relaxedOrthoNeighbourSubEventAccuracy)
             runTime = time.time() - startTime
             testRunTimes.append(runTime)
         
@@ -697,16 +718,18 @@ def main():
         with open(testFolder + "/AppRuntimes.txt", "a+") as runtimeFile:
             runtimeFile.write("\n")
         if cherryTree:
-            with open(testFolder + "/OrthoRuntimes.txt", "a+") as runtimeFile:
-                runtimeFile.write("\n")
+            if runOrthoAlign:
+                with open(testFolder + "/OrthoRuntimes.txt", "a+") as runtimeFile:
+                    runtimeFile.write("\n")
             if runDupLoss:
                 with open(testFolder + "/DuplossRuntimes.txt", "a+") as runtimeFile:
                     runtimeFile.write("\n")
             if neighbour:
                 with open(testFolder + "/AppNeighbourRuntimes.txt", "a+") as runtimeFile:
                     runtimeFile.write("\n")
-                with open(testFolder + "/OrthoNeighbourRuntimes.txt", "a+") as runtimeFile:
-                    runtimeFile.write("\n")
+                if runOrthoAlign:
+                    with open(testFolder + "/OrthoNeighbourRuntimes.txt", "a+") as runtimeFile:
+                        runtimeFile.write("\n")
                     
         with open(testFolder + "/app-EventSizeData.txt", "a+") as dataFile:
             dataFile.write("\n")
@@ -719,16 +742,17 @@ def main():
         with open(testFolder + "/app-EventMedianData.txt", "a+") as dataFile:
             dataFile.write("\n")
         if cherryTree:
-            with open(testFolder + "/ortho-EventSizeData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/ortho-EventCountData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/ortho-EventMinData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/ortho-EventMaxData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/ortho-EventMedianData.txt", "a+") as dataFile:
-                dataFile.write("\n")
+            if runOrthoAlign:
+                with open(testFolder + "/ortho-EventSizeData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/ortho-EventCountData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/ortho-EventMinData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/ortho-EventMaxData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/ortho-EventMedianData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
                 
             if runDupLoss:
                 with open(testFolder + "/dup-EventSizeData.txt", "a+") as dataFile:
@@ -752,42 +776,47 @@ def main():
                     dataFile.write("\n")
                 with open(testFolder + "/appNeighbour-EventMedianData.txt", "a+") as dataFile:
                     dataFile.write("\n")
-                    
-                with open(testFolder + "/orthoNeighbour-EventSizeData.txt", "a+") as dataFile:
-                    dataFile.write("\n")
-                with open(testFolder + "/orthoNeighbour-EventCountData.txt", "a+") as dataFile:
-                    dataFile.write("\n")
-                with open(testFolder + "/orthoNeighbour-EventMinData.txt", "a+") as dataFile:
-                    dataFile.write("\n")
-                with open(testFolder + "/orthoNeighbour-EventMaxData.txt", "a+") as dataFile:
-                    dataFile.write("\n")
-                with open(testFolder + "/orthoNeighbour-EventMedianData.txt", "a+") as dataFile:
-                    dataFile.write("\n")
+                
+                if runOrthoAlign:
+                    with open(testFolder + "/orthoNeighbour-EventSizeData.txt", "a+") as dataFile:
+                        dataFile.write("\n")
+                    with open(testFolder + "/orthoNeighbour-EventCountData.txt", "a+") as dataFile:
+                        dataFile.write("\n")
+                    with open(testFolder + "/orthoNeighbour-EventMinData.txt", "a+") as dataFile:
+                        dataFile.write("\n")
+                    with open(testFolder + "/orthoNeighbour-EventMaxData.txt", "a+") as dataFile:
+                        dataFile.write("\n")
+                    with open(testFolder + "/orthoNeighbour-EventMedianData.txt", "a+") as dataFile:
+                        dataFile.write("\n")
         
         averageRunTimePerTest.append(testRunTimes)
 #        printAverages(averageRunTimePerTest)
         
         totalEventsAppAveragesList.append(numEventsAppAveragesList)
         totalEventsGenAveragesList.append(numEventsGenAveragesList)
-        totalEventsOrthoAveragesList.append(numEventsOrthoAveragesList)
+        if runOrthoAlign:
+            totalEventsOrthoAveragesList.append(numEventsOrthoAveragesList)
         if runDupLoss:
             totalEventsDupAveragesList.append(numEventsDupAveragesList)
         
         totalEventsAppNeighbourAveragesList.append(numEventsAppNeighbourAveragesList)
-        totalEventsOrthoNeighbourAveragesList.append(numEventsOrthoNeighbourAveragesList)
+        if runOrthoAlign:
+            totalEventsOrthoNeighbourAveragesList.append(numEventsOrthoNeighbourAveragesList)
         
         totalStrictAppAccuracyAveragesList.append(strictAppAccuracyAveragesList)
         totalRelaxedAppAccuracyAveragesList.append(relaxedAppAccuracyAveragesList)
-        totalStrictOrthoAccuracyAveragesList.append(strictOrthoAccuracyAveragesList)
-        totalRelaxedOrthoAccuracyAveragesList.append(relaxedOrthoAccuracyAveragesList)
+        if runOrthoAlign:
+            totalStrictOrthoAccuracyAveragesList.append(strictOrthoAccuracyAveragesList)
+            totalRelaxedOrthoAccuracyAveragesList.append(relaxedOrthoAccuracyAveragesList)
         if runDupLoss:
             totalStrictDupAccuracyAveragesList.append(strictDupAccuracyAveragesList)
             totalRelaxedDupAccuracyAveragesList.append(relaxedDupAccuracyAveragesList)
         
         totalStrictAppNeighbourAccuracyAveragesList.append(strictAppNeighbourAccuracyAveragesList)
         totalRelaxedAppNeighbourAccuracyAveragesList.append(relaxedAppNeighbourAccuracyAveragesList)
-        totalStrictOrthoNeighbourAccuracyAveragesList.append(strictOrthoNeighbourAccuracyAveragesList)
-        totalRelaxedOrthoNeighbourAccuracyAveragesList.append(relaxedOrthoNeighbourAccuracyAveragesList)
+        if runOrthoAlign:
+            totalStrictOrthoNeighbourAccuracyAveragesList.append(strictOrthoNeighbourAccuracyAveragesList)
+            totalRelaxedOrthoNeighbourAccuracyAveragesList.append(relaxedOrthoNeighbourAccuracyAveragesList)
         
         totalStrictAppDupAccuracyAveragesList.append(strictAppDupAccuracyAveragesList)
         totalRelaxedAppDupAccuracyAveragesList.append(relaxedAppDupAccuracyAveragesList)
@@ -802,16 +831,17 @@ def main():
         totalStrictAppSubAccuracyAveragesList.append(strictAppSubAccuracyAveragesList)
         totalRelaxedAppSubAccuracyAveragesList.append(relaxedAppSubAccuracyAveragesList)
         
-        totalStrictOrthoDupAccuracyAveragesList.append(strictOrthoDupAccuracyAveragesList)
-        totalRelaxedOrthoDupAccuracyAveragesList.append(relaxedOrthoDupAccuracyAveragesList)
-        totalStrictOrthoLossAccuracyAveragesList.append(strictOrthoLossAccuracyAveragesList)
-        totalRelaxedOrthoLossAccuracyAveragesList.append(relaxedOrthoLossAccuracyAveragesList)
-        totalStrictOrthoInvAccuracyAveragesList.append(strictOrthoInvAccuracyAveragesList)
-        totalRelaxedOrthoInvAccuracyAveragesList.append(relaxedOrthoInvAccuracyAveragesList)
-        totalStrictOrthoTransAccuracyAveragesList.append(strictOrthoTransAccuracyAveragesList)
-        totalRelaxedOrthoTransAccuracyAveragesList.append(relaxedOrthoTransAccuracyAveragesList)
-        totalStrictOrthoSubAccuracyAveragesList.append(strictOrthoSubAccuracyAveragesList)
-        totalRelaxedOrthoSubAccuracyAveragesList.append(relaxedOrthoSubAccuracyAveragesList)
+        if runOrthoAlign:
+            totalStrictOrthoDupAccuracyAveragesList.append(strictOrthoDupAccuracyAveragesList)
+            totalRelaxedOrthoDupAccuracyAveragesList.append(relaxedOrthoDupAccuracyAveragesList)
+            totalStrictOrthoLossAccuracyAveragesList.append(strictOrthoLossAccuracyAveragesList)
+            totalRelaxedOrthoLossAccuracyAveragesList.append(relaxedOrthoLossAccuracyAveragesList)
+            totalStrictOrthoInvAccuracyAveragesList.append(strictOrthoInvAccuracyAveragesList)
+            totalRelaxedOrthoInvAccuracyAveragesList.append(relaxedOrthoInvAccuracyAveragesList)
+            totalStrictOrthoTransAccuracyAveragesList.append(strictOrthoTransAccuracyAveragesList)
+            totalRelaxedOrthoTransAccuracyAveragesList.append(relaxedOrthoTransAccuracyAveragesList)
+            totalStrictOrthoSubAccuracyAveragesList.append(strictOrthoSubAccuracyAveragesList)
+            totalRelaxedOrthoSubAccuracyAveragesList.append(relaxedOrthoSubAccuracyAveragesList)
         
         if runDupLoss:
             totalStrictDupDupAccuracyAveragesList.append(strictDupDupAccuracyAveragesList)
@@ -838,24 +868,27 @@ def main():
         totalStrictAppNeighbourSubAccuracyAveragesList.append(strictAppNeighbourSubAccuracyAveragesList)
         totalRelaxedAppNeighbourSubAccuracyAveragesList.append(relaxedAppNeighbourSubAccuracyAveragesList)
         
-        totalStrictOrthoNeighbourDupAccuracyAveragesList.append(strictOrthoNeighbourDupAccuracyAveragesList)
-        totalRelaxedOrthoNeighbourDupAccuracyAveragesList.append(relaxedOrthoNeighbourDupAccuracyAveragesList)
-        totalStrictOrthoNeighbourLossAccuracyAveragesList.append(strictOrthoNeighbourLossAccuracyAveragesList)
-        totalRelaxedOrthoNeighbourLossAccuracyAveragesList.append(relaxedOrthoNeighbourLossAccuracyAveragesList)
-        totalStrictOrthoNeighbourInvAccuracyAveragesList.append(strictOrthoNeighbourInvAccuracyAveragesList)
-        totalRelaxedOrthoNeighbourInvAccuracyAveragesList.append(relaxedOrthoNeighbourInvAccuracyAveragesList)
-        totalStrictOrthoNeighbourTransAccuracyAveragesList.append(strictOrthoNeighbourTransAccuracyAveragesList)
-        totalRelaxedOrthoNeighbourTransAccuracyAveragesList.append(relaxedOrthoNeighbourTransAccuracyAveragesList)
-        totalStrictOrthoNeighbourSubAccuracyAveragesList.append(strictOrthoNeighbourSubAccuracyAveragesList)
-        totalRelaxedOrthoNeighbourSubAccuracyAveragesList.append(relaxedOrthoNeighbourSubAccuracyAveragesList)
+        if runOrthoAlign:
+            totalStrictOrthoNeighbourDupAccuracyAveragesList.append(strictOrthoNeighbourDupAccuracyAveragesList)
+            totalRelaxedOrthoNeighbourDupAccuracyAveragesList.append(relaxedOrthoNeighbourDupAccuracyAveragesList)
+            totalStrictOrthoNeighbourLossAccuracyAveragesList.append(strictOrthoNeighbourLossAccuracyAveragesList)
+            totalRelaxedOrthoNeighbourLossAccuracyAveragesList.append(relaxedOrthoNeighbourLossAccuracyAveragesList)
+            totalStrictOrthoNeighbourInvAccuracyAveragesList.append(strictOrthoNeighbourInvAccuracyAveragesList)
+            totalRelaxedOrthoNeighbourInvAccuracyAveragesList.append(relaxedOrthoNeighbourInvAccuracyAveragesList)
+            totalStrictOrthoNeighbourTransAccuracyAveragesList.append(strictOrthoNeighbourTransAccuracyAveragesList)
+            totalRelaxedOrthoNeighbourTransAccuracyAveragesList.append(relaxedOrthoNeighbourTransAccuracyAveragesList)
+            totalStrictOrthoNeighbourSubAccuracyAveragesList.append(strictOrthoNeighbourSubAccuracyAveragesList)
+            totalRelaxedOrthoNeighbourSubAccuracyAveragesList.append(relaxedOrthoNeighbourSubAccuracyAveragesList)
         
         totalAppFMeasureList.append(appFMeasureList)
-        totalOrthoFMeasureList.append(orthoFMeasureList)
+        if runOrthoAlign:
+            totalOrthoFMeasureList.append(orthoFMeasureList)
         if runDupLoss:
             totalDupFMeasureList.append(dupFMeasureList)
         
         totalAppNeighbourFMeasureList.append(appNeighbourFMeasureList)
-        totalOrthoNeighbourFMeasureList.append(orthoFMeasureList)
+        if runOrthoAlign:
+            totalOrthoNeighbourFMeasureList.append(orthoFMeasureList)
         
         if testDiff == "Op-Value":
             genOperonSizes = readDataFile(testFolder + "/genTotalSizesData.txt")
@@ -884,25 +917,29 @@ def main():
         
     outputData(totalEventsAppAveragesList, testFolder + "appEventsData.txt")
     outputData(totalEventsGenAveragesList, testFolder + "genEventsData.txt")
-    outputData(totalEventsOrthoAveragesList, testFolder + "orthoEventsData.txt")
+    if runOrthoAlign:
+        outputData(totalEventsOrthoAveragesList, testFolder + "orthoEventsData.txt")
     if runDupLoss:
         outputData(totalEventsDupAveragesList, testFolder + "dupEventsData.txt")
     
     outputData(totalEventsAppNeighbourAveragesList, testFolder + "appNeighbourEventsData.txt")
-    outputData(totalEventsOrthoNeighbourAveragesList, testFolder + "orthoNeighbourEventsData.txt")
+    if runOrthoAlign:
+        outputData(totalEventsOrthoNeighbourAveragesList, testFolder + "orthoNeighbourEventsData.txt")
     
     outputData(totalStrictAppAccuracyAveragesList, testFolder + "strictAppAccuracyData.txt")
     outputData(totalRelaxedAppAccuracyAveragesList, testFolder + "relaxedAppAccuracyData.txt")
-    outputData(totalStrictOrthoAccuracyAveragesList, testFolder + "strictOrthoAccuracyData.txt")
-    outputData(totalRelaxedOrthoAccuracyAveragesList, testFolder + "relaxedOrthoAccuracyData.txt")
+    if runOrthoAlign:
+        outputData(totalStrictOrthoAccuracyAveragesList, testFolder + "strictOrthoAccuracyData.txt")
+        outputData(totalRelaxedOrthoAccuracyAveragesList, testFolder + "relaxedOrthoAccuracyData.txt")
     if runDupLoss:
         outputData(totalStrictDupAccuracyAveragesList, testFolder + "strictDupAccuracyData.txt")
         outputData(totalRelaxedDupAccuracyAveragesList, testFolder + "relaxedDupAccuracyData.txt")
     
     outputData(totalStrictAppNeighbourAccuracyAveragesList, testFolder + "strictAppNeighbourAccuracyData.txt")
     outputData(totalRelaxedAppNeighbourAccuracyAveragesList, testFolder + "relaxedAppNeighbourAccuracyData.txt")
-    outputData(totalStrictOrthoNeighbourAccuracyAveragesList, testFolder + "strictOrthoNeighbourAccuracyData.txt")
-    outputData(totalRelaxedOrthoNeighbourAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourAccuracyData.txt")
+    if runOrthoAlign:
+        outputData(totalStrictOrthoNeighbourAccuracyAveragesList, testFolder + "strictOrthoNeighbourAccuracyData.txt")
+        outputData(totalRelaxedOrthoNeighbourAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourAccuracyData.txt")
     
     outputData(totalStrictAppDupAccuracyAveragesList, testFolder + "strictAppDupAccuracyData.txt")
     outputData(totalRelaxedAppDupAccuracyAveragesList, testFolder + "relaxedAppDupAccuracyData.txt")
@@ -915,16 +952,17 @@ def main():
     outputData(totalStrictAppSubAccuracyAveragesList, testFolder + "strictAppSubAccuracyData.txt")
     outputData(totalRelaxedAppSubAccuracyAveragesList, testFolder + "relaxedAppSubAccuracyData.txt")
     
-    outputData(totalStrictOrthoDupAccuracyAveragesList, testFolder + "strictOrthoDupAccuracyData.txt")
-    outputData(totalRelaxedOrthoDupAccuracyAveragesList, testFolder + "relaxedOrthoDupAccuracyData.txt")
-    outputData(totalStrictOrthoLossAccuracyAveragesList, testFolder + "strictOrthoLossAccuracyData.txt")
-    outputData(totalRelaxedOrthoLossAccuracyAveragesList, testFolder + "relaxedOrthoLossAccuracyData.txt")
-    outputData(totalStrictOrthoInvAccuracyAveragesList, testFolder + "strictOrthoInvAccuracyData.txt")
-    outputData(totalRelaxedOrthoInvAccuracyAveragesList, testFolder + "relaxedOrthoInvAccuracyData.txt")
-    outputData(totalStrictOrthoTransAccuracyAveragesList, testFolder + "strictOrthoTransAccuracyData.txt")
-    outputData(totalRelaxedOrthoTransAccuracyAveragesList, testFolder + "relaxedOrthoTransAccuracyData.txt")
-    outputData(totalStrictOrthoSubAccuracyAveragesList, testFolder + "strictOrthoSubAccuracyData.txt")
-    outputData(totalRelaxedOrthoSubAccuracyAveragesList, testFolder + "relaxedOrthoSubAccuracyData.txt")
+    if runOrthoAlign:
+        outputData(totalStrictOrthoDupAccuracyAveragesList, testFolder + "strictOrthoDupAccuracyData.txt")
+        outputData(totalRelaxedOrthoDupAccuracyAveragesList, testFolder + "relaxedOrthoDupAccuracyData.txt")
+        outputData(totalStrictOrthoLossAccuracyAveragesList, testFolder + "strictOrthoLossAccuracyData.txt")
+        outputData(totalRelaxedOrthoLossAccuracyAveragesList, testFolder + "relaxedOrthoLossAccuracyData.txt")
+        outputData(totalStrictOrthoInvAccuracyAveragesList, testFolder + "strictOrthoInvAccuracyData.txt")
+        outputData(totalRelaxedOrthoInvAccuracyAveragesList, testFolder + "relaxedOrthoInvAccuracyData.txt")
+        outputData(totalStrictOrthoTransAccuracyAveragesList, testFolder + "strictOrthoTransAccuracyData.txt")
+        outputData(totalRelaxedOrthoTransAccuracyAveragesList, testFolder + "relaxedOrthoTransAccuracyData.txt")
+        outputData(totalStrictOrthoSubAccuracyAveragesList, testFolder + "strictOrthoSubAccuracyData.txt")
+        outputData(totalRelaxedOrthoSubAccuracyAveragesList, testFolder + "relaxedOrthoSubAccuracyData.txt")
     
     if runDupLoss:
         outputData(totalStrictDupDupAccuracyAveragesList, testFolder + "strictDupDupAccuracyData.txt")
@@ -949,24 +987,27 @@ def main():
     outputData(totalStrictAppNeighbourSubAccuracyAveragesList, testFolder + "strictAppNeighbourSubAccuracyData.txt")
     outputData(totalRelaxedAppNeighbourSubAccuracyAveragesList, testFolder + "relaxedAppNeighbourSubAccuracyData.txt")
     
-    outputData(totalStrictOrthoNeighbourDupAccuracyAveragesList, testFolder + "strictOrthoNeighbourDupAccuracyData.txt")
-    outputData(totalRelaxedOrthoNeighbourDupAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourDupAccuracyData.txt")
-    outputData(totalStrictOrthoNeighbourLossAccuracyAveragesList, testFolder + "strictOrthoNeighbourLossAccuracyData.txt")
-    outputData(totalRelaxedOrthoNeighbourLossAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourLossAccuracyData.txt")
-    outputData(totalStrictOrthoNeighbourInvAccuracyAveragesList, testFolder + "strictOrthoNeighbourInvAccuracyData.txt")
-    outputData(totalRelaxedOrthoNeighbourInvAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourInvAccuracyData.txt")
-    outputData(totalStrictOrthoNeighbourTransAccuracyAveragesList, testFolder + "strictOrthoNeighbourTransAccuracyData.txt")
-    outputData(totalRelaxedOrthoNeighbourTransAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourTransAccuracyData.txt")
-    outputData(totalStrictOrthoNeighbourSubAccuracyAveragesList, testFolder + "strictOrthoNeighbourSubAccuracyData.txt")
-    outputData(totalRelaxedOrthoNeighbourSubAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourSubAccuracyData.txt")
+    if runOrthoAlign:
+        outputData(totalStrictOrthoNeighbourDupAccuracyAveragesList, testFolder + "strictOrthoNeighbourDupAccuracyData.txt")
+        outputData(totalRelaxedOrthoNeighbourDupAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourDupAccuracyData.txt")
+        outputData(totalStrictOrthoNeighbourLossAccuracyAveragesList, testFolder + "strictOrthoNeighbourLossAccuracyData.txt")
+        outputData(totalRelaxedOrthoNeighbourLossAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourLossAccuracyData.txt")
+        outputData(totalStrictOrthoNeighbourInvAccuracyAveragesList, testFolder + "strictOrthoNeighbourInvAccuracyData.txt")
+        outputData(totalRelaxedOrthoNeighbourInvAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourInvAccuracyData.txt")
+        outputData(totalStrictOrthoNeighbourTransAccuracyAveragesList, testFolder + "strictOrthoNeighbourTransAccuracyData.txt")
+        outputData(totalRelaxedOrthoNeighbourTransAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourTransAccuracyData.txt")
+        outputData(totalStrictOrthoNeighbourSubAccuracyAveragesList, testFolder + "strictOrthoNeighbourSubAccuracyData.txt")
+        outputData(totalRelaxedOrthoNeighbourSubAccuracyAveragesList, testFolder + "relaxedOrthoNeighbourSubAccuracyData.txt")
     
     outputData(totalAppFMeasureList, testFolder + "appFMeasureData.txt")
-    outputData(totalOrthoFMeasureList, testFolder + "orthoFMeasureData.txt")
+    if runOrthoAlign:
+        outputData(totalOrthoFMeasureList, testFolder + "orthoFMeasureData.txt")
     if runDupLoss:
         outputData(totalDupFMeasureList, testFolder + "dupFMeasureData.txt")
     
     outputData(totalAppNeighbourFMeasureList, testFolder + "appNeighbourFMeasureData.txt")
-    outputData(totalOrthoNeighbourFMeasureList, testFolder + "orthoNeighbourFMeasureData.txt")
+    if runOrthoAlign:
+        outputData(totalOrthoNeighbourFMeasureList, testFolder + "orthoNeighbourFMeasureData.txt")
     
     if cherryTree:
         if neighbour: 
@@ -1031,7 +1072,10 @@ def printAverages(AveragesPerTest):
 def plotRuntimes(cherryTree, neighbour, xAxisTitle, xAxis):
     appTotalRuntimes = readDataFile(testFolder + "/AppRuntimes.txt")
     if cherryTree:
-        orthoTotalRuntimes = readDataFile(testFolder + "/OrthoRuntimes.txt")
+        if runOrthoAlign:
+            orthoTotalRuntimes = readDataFile(testFolder + "/OrthoRuntimes.txt")
+        else:
+            orthoTotalRuntimes = None
         
         if runDupLoss:
             dupTotalRuntimes = readDataFile(testFolder + "/DuplossRuntimes.txt")
@@ -1040,7 +1084,10 @@ def plotRuntimes(cherryTree, neighbour, xAxisTitle, xAxis):
 
         if neighbour:
             appNeighbourTotalRuntimes = readDataFile(testFolder + "/AppNeighbourRuntimes.txt")
-            orthoNeighbourTotalRuntimes = readDataFile(testFolder + "/OrthoNeighbourRuntimes.txt")
+            if runOrthoAlign:
+                orthoNeighbourTotalRuntimes = readDataFile(testFolder + "/OrthoNeighbourRuntimes.txt")
+            else:
+                orthoNeighbourTotalRuntimes = None
             
             graphData("Runtime", appTotalRuntimes, xAxisTitle, xAxis, totalAverages3 = orthoTotalRuntimes, totalAverages4 = dupTotalRuntimes, totalAverages5 = appNeighbourTotalRuntimes, totalAverages6 = orthoNeighbourTotalRuntimes)
         else:
@@ -1062,13 +1109,22 @@ def plotEventSizeData(cherryTree, neighbour, xAxisTitle, xAxis):
     appMedianSizes = readDataFile(testFolder + "/app-EventMedianData.txt")
     
     if cherryTree:
-        orthoEventSizes = readDataFile(testFolder + "/ortho-EventSizeData.txt")
-        orthoNumEvents = readDataFile(testFolder + "/ortho-EventCountData.txt")
-        orthoAvgEventSizes = calculateSizeAverages(orthoEventSizes, orthoNumEvents)
-        
-        orthoMinSizes = readDataFile(testFolder + "/ortho-EventMinData.txt")
-        orthoMaxSizes = readDataFile(testFolder + "/ortho-EventMaxData.txt")
-        orthoMedianSizes = readDataFile(testFolder + "/ortho-EventMedianData.txt")
+        if runOrthoAlign:
+            orthoEventSizes = readDataFile(testFolder + "/ortho-EventSizeData.txt")
+            orthoNumEvents = readDataFile(testFolder + "/ortho-EventCountData.txt")
+            orthoAvgEventSizes = calculateSizeAverages(orthoEventSizes, orthoNumEvents)
+            
+            orthoMinSizes = readDataFile(testFolder + "/ortho-EventMinData.txt")
+            orthoMaxSizes = readDataFile(testFolder + "/ortho-EventMaxData.txt")
+            orthoMedianSizes = readDataFile(testFolder + "/ortho-EventMedianData.txt")
+        else:
+            orthoEventSizes = None
+            orthoNumEvents = None
+            orthoAvgEventSizes = None
+            
+            orthoMinSizes = None
+            orthoMaxSizes = None
+            orthoMedianSizes = None
         
         if runDupLoss:
             dupEventSizes = readDataFile(testFolder + "/dup-EventSizeData.txt")
@@ -1096,13 +1152,23 @@ def plotEventSizeData(cherryTree, neighbour, xAxisTitle, xAxis):
             appNeighbourMaxSizes = readDataFile(testFolder + "/appNeighbour-EventMaxData.txt")
             appNeighbourMedianSizes = readDataFile(testFolder + "/appNeighbour-EventMedianData.txt")
             
-            orthoNeighbourEventSizes = readDataFile(testFolder + "/orthoNeighbour-EventSizeData.txt")
-            orthoNeighbourNumEvents = readDataFile(testFolder + "/orthoNeighbour-EventCountData.txt")
-            orthoNeighbourAvgEventSizes = calculateSizeAverages(orthoNeighbourEventSizes, orthoNeighbourNumEvents)
-            
-            orthoNeighbourMinSizes = readDataFile(testFolder + "/orthoNeighbour-EventMinData.txt")
-            orthoNeighbourMaxSizes = readDataFile(testFolder + "/orthoNeighbour-EventMaxData.txt")
-            orthoNeighbourMedianSizes = readDataFile(testFolder + "/orthoNeighbour-EventMedianData.txt")
+            if runOrthoAlign:
+                orthoNeighbourEventSizes = readDataFile(testFolder + "/orthoNeighbour-EventSizeData.txt")
+                orthoNeighbourNumEvents = readDataFile(testFolder + "/orthoNeighbour-EventCountData.txt")
+                orthoNeighbourAvgEventSizes = calculateSizeAverages(orthoNeighbourEventSizes, orthoNeighbourNumEvents)
+                
+                orthoNeighbourMinSizes = readDataFile(testFolder + "/orthoNeighbour-EventMinData.txt")
+                orthoNeighbourMaxSizes = readDataFile(testFolder + "/orthoNeighbour-EventMaxData.txt")
+                orthoNeighbourMedianSizes = readDataFile(testFolder + "/orthoNeighbour-EventMedianData.txt")
+            else:
+                orthoNeighbourEventSizes = None
+                orthoNeighbourNumEvents = None
+                orthoNeighbourAvgEventSizes = None
+                
+                orthoNeighbourMinSizes = None
+                orthoNeighbourMaxSizes = None
+                orthoNeighbourMedianSizes = None
+
             graphData("AvgEventSize", appAvgEventSizes, xAxisTitle, xAxis, totalAverages3 = orthoAvgEventSizes, totalAverages4 = dupAvgEventSizes, totalAverages5 = appNeighbourAvgEventSizes, totalAverages6 = orthoNeighbourAvgEventSizes)
             graphData("AvgMinSize", appMinSizes, xAxisTitle, xAxis, totalAverages3 = orthoMinSizes, totalAverages4 = dupMinSizes, totalAverages5 = appNeighbourMinSizes, totalAverages6 = orthoNeighbourMinSizes)
             graphData("AvgMaxSize", appMaxSizes, xAxisTitle, xAxis, totalAverages3 = orthoMaxSizes, totalAverages4 = dupMaxSizes, totalAverages5 = appNeighbourMaxSizes, totalAverages6 = orthoNeighbourMaxSizes)
@@ -1257,19 +1323,20 @@ def graphData(graphType, totalAverages, xAxisTitle, xAxis, totalAverages2 = None
         line2, = plt.plot(xAxis, averages2, 'r^-', label='Generator')
         labels.append(line2)
         
-    if totalAverages3 is not None:
-        averages3 = []
-        if printToConsole:
-            print totalAverages3
-        for averagesList in totalAverages3:
-            currentSum = 0.0    
-            for average in averagesList:
-                currentSum += average
-            
-            average = currentSum / len(averagesList)
-            averages3.append(average)
-        line3, = plt.plot(xAxis, averages3, 'g+-', label='OrthoAlign')
-        labels.append(line3)
+    if runOrthoAlign:
+        if totalAverages3 is not None:
+            averages3 = []
+            if printToConsole:
+                print totalAverages3
+            for averagesList in totalAverages3:
+                currentSum = 0.0    
+                for average in averagesList:
+                    currentSum += average
+                
+                average = currentSum / len(averagesList)
+                averages3.append(average)
+            line3, = plt.plot(xAxis, averages3, 'g+-', label='OrthoAlign')
+            labels.append(line3)
         
     if runDupLoss:
         if totalAverages4 is not None:
@@ -1300,19 +1367,20 @@ def graphData(graphType, totalAverages, xAxisTitle, xAxis, totalAverages2 = None
         line5, = plt.plot(xAxis, averages5, 'o--', label='BOPAL with Neighbour')
         labels.append(line5)
         
-    if totalAverages6 is not None:
-        averages6 = []
-        if printToConsole:
-            print totalAverages6
-        for averagesList in totalAverages6:
-            currentSum = 0.0    
-            for average in averagesList:
-                currentSum += average
-            
-            average = currentSum / len(averagesList)
-            averages6.append(average)
-        line6, = plt.plot(xAxis, averages6, 'yx--', label='OrthoAlign with Neighbour')
-        labels.append(line6)
+    if runOrthoAlign:
+        if totalAverages6 is not None:
+            averages6 = []
+            if printToConsole:
+                print totalAverages6
+            for averagesList in totalAverages6:
+                currentSum = 0.0    
+                for average in averagesList:
+                    currentSum += average
+                
+                average = currentSum / len(averagesList)
+                averages6.append(average)
+            line6, = plt.plot(xAxis, averages6, 'yx--', label='OrthoAlign with Neighbour')
+            labels.append(line6)
         
     plt.legend(handles=labels)
     
