@@ -31,6 +31,8 @@ trans_pValue = 0.0
 
 testFolder = ""
 
+runDupLoss = False
+
 def main():
     global probDup
     global dup_pValue
@@ -42,10 +44,15 @@ def main():
     global probTrans
     global trans_pValue
     global testFolder
+
+    global runDupLoss
     
     cherryTree = False
     neighbour = False
     equalEvents = False
+
+    runOrthoAlign = False
+
     if len(sys.argv) < 3:
         print "WARNING: Must provide a file for testing. Exiting..."
         sys.exit(0)
@@ -57,6 +64,10 @@ def main():
                 neighbour = True
         if 'e' in sys.argv[2]:
             equalEvents = True
+        if 'd' in sys.argv[2]:
+            runDupLoss = True
+        if 'o' in sys.argv[2]:
+            runOrthoAlign = True
             
         numRounds = int(sys.argv[3])
         testFolder = sys.argv[4] + "/"
@@ -69,6 +80,10 @@ def main():
         if 'e' in sys.argv[2]:
             equalEvents = True
             numRounds = int(sys.argv[3])
+        if 'd' in sys.argv[2]:
+            runDupLoss = True
+        if 'o' in sys.argv[2]:
+            runOrthoAlign = True
             
         if not cherryTree and not equalEvents:
             numRounds = int(sys.argv[2])
@@ -81,6 +96,8 @@ def main():
     
     xAxis = []
     baseCommand = 'python Run_2-SPP_OrthoAlign.py -f '
+    if runDupLoss:
+        baseCommand = 'python Run_2-SPP_OrthoAlign.py -fd '
     
     testingFile = open(testFile, "r")
     testDiff = testingFile.readline().strip()
@@ -191,7 +208,8 @@ def main():
         numEventsAppAveragesList = []
         numEventsGenAveragesList = []
         numEventsOrthoAveragesList = []
-        numEventsDupAveragesList = []
+        if runDupLoss:
+            numEventsDupAveragesList = []
         numEventsAppNeighbourAveragesList = []
         numEventsOrthoNeighbourAveragesList = []
         
@@ -199,8 +217,9 @@ def main():
         relaxedAppAccuracyAveragesList = []
         strictOrthoAccuracyAveragesList = []
         relaxedOrthoAccuracyAveragesList = []
-        strictDupAccuracyAveragesList = []
-        relaxedDupAccuracyAveragesList = []
+        if runDupLoss:
+            strictDupAccuracyAveragesList = []
+            relaxedDupAccuracyAveragesList = []
         
         strictAppNeighbourAccuracyAveragesList = []
         relaxedAppNeighbourAccuracyAveragesList = []
@@ -236,18 +255,19 @@ def main():
         relaxedOrthoSubAccuracyAveragesList = []
         
         #duploss accuracies for different event types
-        strictDupDupAccuracyAveragesList = []
-        relaxedDupDupAccuracyAveragesList = []
-        strictDupLossAccuracyAveragesList = []
-        relaxedDupLossAccuracyAveragesList = []
-        strictDupInvAccuracyAveragesList = []
-        relaxedDupInvAccuracyAveragesList = []
-        strictDupTransAccuracyAveragesList = []
-        relaxedDupTransAccuracyAveragesList = []
+        if runDupLoss:
+            strictDupDupAccuracyAveragesList = []
+            relaxedDupDupAccuracyAveragesList = []
+            strictDupLossAccuracyAveragesList = []
+            relaxedDupLossAccuracyAveragesList = []
+            strictDupInvAccuracyAveragesList = []
+            relaxedDupInvAccuracyAveragesList = []
+            strictDupTransAccuracyAveragesList = []
+            relaxedDupTransAccuracyAveragesList = []
 #        strictDupInvTransAccuracyAveragesList = []
 #        relaxedDupInvTransAccuracyAveragesList = []
-        strictDupSubAccuracyAveragesList = []
-        relaxedDupSubAccuracyAveragesList = []
+            strictDupSubAccuracyAveragesList = []
+            relaxedDupSubAccuracyAveragesList = []
         
         #AppNeighbour accuracies for different event types
         strictAppNeighbourDupAccuracyAveragesList = []
@@ -279,7 +299,8 @@ def main():
         
         appFMeasureList = []
         orthoFMeasureList = []
-        dupFMeasureList = []
+        if runDupLoss:
+            dupFMeasureList = []
         
         appNeighbourFMeasureList = []
         orthoNeighbourFMeasureList = []
@@ -437,17 +458,18 @@ def main():
                             break
                         line = f.readline()
                         
-                with open(duplossOutFile, "r") as f:
-                    line = f.readline()
-                    while line:
-                        splitted = line.split("ost = ")
-                        if len(splitted) > 1:
-                            dupCost = float(splitted[1])
-                            line = f.readline()
-                        if line.strip() == ">Ancestor":
-                            dupAncestor = f.readline().strip()
-                            break
+                if runDupLoss:
+                    with open(duplossOutFile, "r") as f:
                         line = f.readline()
+                        while line:
+                            splitted = line.split("ost = ")
+                            if len(splitted) > 1:
+                                dupCost = float(splitted[1])
+                                line = f.readline()
+                            if line.strip() == ">Ancestor":
+                                dupAncestor = f.readline().strip()
+                                break
+                            line = f.readline()
                         
                 with open(appRootFile, "r") as f:
                     appAncestor = f.readline()
@@ -456,7 +478,8 @@ def main():
                     genAncestor = f.readline()
                 
                 numEventsOrthoAveragesList.append(orthoCost)
-                numEventsDupAveragesList.append(dupCost)
+                if runDupLoss:
+                    numEventsDupAveragesList.append(dupCost)
                 if printToConsole:
                     print orthoCost
                     print dupCost
@@ -465,10 +488,11 @@ def main():
                 
                 orthoRecall, orthoPrecision, orthofMeasure = compareAnc(orthoAncestor, genAncestor, testSetDir + "/ortho-")
                 appRecall, appPrecision, appfMeasure = compareAnc(appAncestor, genAncestor, testSetDir + "/app-")
-                dupRecall, dupPrecision, dupfMeasure = compareAnc(dupAncestor, genAncestor, testSetDir + "/dup-")
+                if runDupLoss:
+                    dupRecall, dupPrecision, dupfMeasure = compareAnc(dupAncestor, genAncestor, testSetDir + "/dup-")
+                    dupFMeasureList.append(dupfMeasure)
                 appFMeasureList.append(appfMeasure)
                 orthoFMeasureList.append(orthofMeasure)
-                dupFMeasureList.append(dupfMeasure)
                 
                 outputEvents(testSetDir + "/orthoAlign.out", testSetDir + "/orthoAlignEvents.out")                
                 totalOrthoEventsFound, totalOrthoEventsExpected, totalOrthoGenesFound, totalOrthoGenesExpected, totalOrthoEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'orthoAlignEvents.out', 'generatorOutput.txt', 'ortho-')
@@ -503,38 +527,39 @@ def main():
                 strictOrthoSubAccuracyAveragesList.append(strictOrthoSubEventAccuracy)
                 relaxedOrthoSubAccuracyAveragesList.append(relaxedOrthoSubEventAccuracy)
                 
-                outputEvents(testSetDir + "/duploss.out", testSetDir + "/duplossEvents.out")
-                totalDupEventsFound, totalDupEventsExpected, totalDupGenesFound, totalDupGenesExpected, totalDupEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'duplossEvents.out', 'generatorOutput.txt', 'dup-')
-                strictDupDupEventAccuracy, relaxedDupDupEventAccuracy = calculateAccuracy(duplicationTotals[0], duplicationTotals[1], duplicationTotals[2], duplicationTotals[3])
-                strictDupLossEventAccuracy, relaxedDupLossEventAccuracy = calculateAccuracy(lossTotals[0], lossTotals[1], lossTotals[2], lossTotals[3])
-                strictDupInvEventAccuracy, relaxedDupInvEventAccuracy = calculateAccuracy(inversionTotals[0], inversionTotals[1], inversionTotals[2], inversionTotals[3])
-                strictDupTransEventAccuracy, relaxedDupTransEventAccuracy = calculateAccuracy(transpositionTotals[0], transpositionTotals[1], transpositionTotals[2], transpositionTotals[3])
-                strictDupSubEventAccuracy, relaxedDupSubEventAccuracy = calculateAccuracy(substitutionTotals[0], substitutionTotals[1], substitutionTotals[2], substitutionTotals[3])
-                
-                if printToConsole:
-                    print('Events Found: %s Events Expected: %s Genes Found: %s Genes Expected: %s Total App Events: %s' % (totalDupEventsFound, totalDupEventsExpected, totalDupGenesFound, totalDupGenesExpected, totalDupEvents))
-                if totalDupEventsExpected > 0:
-                    strictDupEventAccuracy = float(totalDupEventsFound)/float(totalDupEventsExpected) * 100.0
-                else:
-                    strictDupEventAccuracy = 0.0
-                if totalDupGenesExpected > 0:
-                    relaxedDupEventAccuracy = float(totalDupGenesFound)/float(totalDupGenesExpected) * 100.0
-                else:
-                    relaxedDupEventAccuracy = 0.0
+                if runDupLoss:
+                    outputEvents(testSetDir + "/duploss.out", testSetDir + "/duplossEvents.out")
+                    totalDupEventsFound, totalDupEventsExpected, totalDupGenesFound, totalDupGenesExpected, totalDupEvents, duplicationTotals, lossTotals, inversionTotals, transpositionTotals, substitutionTotals = readFiles(testSetDir, 'duplossEvents.out', 'generatorOutput.txt', 'dup-')
+                    strictDupDupEventAccuracy, relaxedDupDupEventAccuracy = calculateAccuracy(duplicationTotals[0], duplicationTotals[1], duplicationTotals[2], duplicationTotals[3])
+                    strictDupLossEventAccuracy, relaxedDupLossEventAccuracy = calculateAccuracy(lossTotals[0], lossTotals[1], lossTotals[2], lossTotals[3])
+                    strictDupInvEventAccuracy, relaxedDupInvEventAccuracy = calculateAccuracy(inversionTotals[0], inversionTotals[1], inversionTotals[2], inversionTotals[3])
+                    strictDupTransEventAccuracy, relaxedDupTransEventAccuracy = calculateAccuracy(transpositionTotals[0], transpositionTotals[1], transpositionTotals[2], transpositionTotals[3])
+                    strictDupSubEventAccuracy, relaxedDupSubEventAccuracy = calculateAccuracy(substitutionTotals[0], substitutionTotals[1], substitutionTotals[2], substitutionTotals[3])
+                    
+                    if printToConsole:
+                        print('Events Found: %s Events Expected: %s Genes Found: %s Genes Expected: %s Total App Events: %s' % (totalDupEventsFound, totalDupEventsExpected, totalDupGenesFound, totalDupGenesExpected, totalDupEvents))
+                    if totalDupEventsExpected > 0:
+                        strictDupEventAccuracy = float(totalDupEventsFound)/float(totalDupEventsExpected) * 100.0
+                    else:
+                        strictDupEventAccuracy = 0.0
+                    if totalDupGenesExpected > 0:
+                        relaxedDupEventAccuracy = float(totalDupGenesFound)/float(totalDupGenesExpected) * 100.0
+                    else:
+                        relaxedDupEventAccuracy = 0.0
 
-                strictDupAccuracyAveragesList.append(strictDupEventAccuracy)
-                relaxedDupAccuracyAveragesList.append(relaxedDupEventAccuracy)
-                
-                strictDupDupAccuracyAveragesList.append(strictDupDupEventAccuracy)
-                relaxedDupDupAccuracyAveragesList.append(relaxedDupDupEventAccuracy)
-                strictDupLossAccuracyAveragesList.append(strictDupLossEventAccuracy)
-                relaxedDupLossAccuracyAveragesList.append(relaxedDupLossEventAccuracy)
-                strictDupInvAccuracyAveragesList.append(strictDupInvEventAccuracy)
-                relaxedDupInvAccuracyAveragesList.append(relaxedDupInvEventAccuracy)
-                strictDupTransAccuracyAveragesList.append(strictDupTransEventAccuracy)
-                relaxedDupTransAccuracyAveragesList.append(relaxedDupTransEventAccuracy)
-                strictDupSubAccuracyAveragesList.append(strictDupSubEventAccuracy)
-                relaxedDupSubAccuracyAveragesList.append(relaxedDupSubEventAccuracy)
+                    strictDupAccuracyAveragesList.append(strictDupEventAccuracy)
+                    relaxedDupAccuracyAveragesList.append(relaxedDupEventAccuracy)
+                    
+                    strictDupDupAccuracyAveragesList.append(strictDupDupEventAccuracy)
+                    relaxedDupDupAccuracyAveragesList.append(relaxedDupDupEventAccuracy)
+                    strictDupLossAccuracyAveragesList.append(strictDupLossEventAccuracy)
+                    relaxedDupLossAccuracyAveragesList.append(relaxedDupLossEventAccuracy)
+                    strictDupInvAccuracyAveragesList.append(strictDupInvEventAccuracy)
+                    relaxedDupInvAccuracyAveragesList.append(relaxedDupInvEventAccuracy)
+                    strictDupTransAccuracyAveragesList.append(strictDupTransEventAccuracy)
+                    relaxedDupTransAccuracyAveragesList.append(relaxedDupTransEventAccuracy)
+                    strictDupSubAccuracyAveragesList.append(strictDupSubEventAccuracy)
+                    relaxedDupSubAccuracyAveragesList.append(relaxedDupSubEventAccuracy)
                 
                 if neighbour:
                     appNeighbourStartTime = time.time()
@@ -674,8 +699,9 @@ def main():
         if cherryTree:
             with open(testFolder + "/OrthoRuntimes.txt", "a+") as runtimeFile:
                 runtimeFile.write("\n")
-            with open(testFolder + "/DuplossRuntimes.txt", "a+") as runtimeFile:
-                runtimeFile.write("\n")
+            if runDupLoss:
+                with open(testFolder + "/DuplossRuntimes.txt", "a+") as runtimeFile:
+                    runtimeFile.write("\n")
             if neighbour:
                 with open(testFolder + "/AppNeighbourRuntimes.txt", "a+") as runtimeFile:
                     runtimeFile.write("\n")
@@ -704,16 +730,17 @@ def main():
             with open(testFolder + "/ortho-EventMedianData.txt", "a+") as dataFile:
                 dataFile.write("\n")
                 
-            with open(testFolder + "/dup-EventSizeData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/dup-EventCountData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/dup-EventMinData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/dup-EventMaxData.txt", "a+") as dataFile:
-                dataFile.write("\n")
-            with open(testFolder + "/dup-EventMedianData.txt", "a+") as dataFile:
-                dataFile.write("\n")
+            if runDupLoss:
+                with open(testFolder + "/dup-EventSizeData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/dup-EventCountData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/dup-EventMinData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/dup-EventMaxData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
+                with open(testFolder + "/dup-EventMedianData.txt", "a+") as dataFile:
+                    dataFile.write("\n")
             if neighbour:
                 with open(testFolder + "/appNeighbour-EventSizeData.txt", "a+") as dataFile:
                     dataFile.write("\n")
@@ -743,7 +770,8 @@ def main():
         totalEventsAppAveragesList.append(numEventsAppAveragesList)
         totalEventsGenAveragesList.append(numEventsGenAveragesList)
         totalEventsOrthoAveragesList.append(numEventsOrthoAveragesList)
-        totalEventsDupAveragesList.append(numEventsDupAveragesList)
+        if runDupLoss:
+            totalEventsDupAveragesList.append(numEventsDupAveragesList)
         
         totalEventsAppNeighbourAveragesList.append(numEventsAppNeighbourAveragesList)
         totalEventsOrthoNeighbourAveragesList.append(numEventsOrthoNeighbourAveragesList)
@@ -752,8 +780,9 @@ def main():
         totalRelaxedAppAccuracyAveragesList.append(relaxedAppAccuracyAveragesList)
         totalStrictOrthoAccuracyAveragesList.append(strictOrthoAccuracyAveragesList)
         totalRelaxedOrthoAccuracyAveragesList.append(relaxedOrthoAccuracyAveragesList)
-        totalStrictDupAccuracyAveragesList.append(strictDupAccuracyAveragesList)
-        totalRelaxedDupAccuracyAveragesList.append(relaxedDupAccuracyAveragesList)
+        if runDupLoss:
+            totalStrictDupAccuracyAveragesList.append(strictDupAccuracyAveragesList)
+            totalRelaxedDupAccuracyAveragesList.append(relaxedDupAccuracyAveragesList)
         
         totalStrictAppNeighbourAccuracyAveragesList.append(strictAppNeighbourAccuracyAveragesList)
         totalRelaxedAppNeighbourAccuracyAveragesList.append(relaxedAppNeighbourAccuracyAveragesList)
@@ -784,16 +813,17 @@ def main():
         totalStrictOrthoSubAccuracyAveragesList.append(strictOrthoSubAccuracyAveragesList)
         totalRelaxedOrthoSubAccuracyAveragesList.append(relaxedOrthoSubAccuracyAveragesList)
         
-        totalStrictDupDupAccuracyAveragesList.append(strictDupDupAccuracyAveragesList)
-        totalRelaxedDupDupAccuracyAveragesList.append(relaxedDupDupAccuracyAveragesList)
-        totalStrictDupLossAccuracyAveragesList.append(strictDupLossAccuracyAveragesList)
-        totalRelaxedDupLossAccuracyAveragesList.append(relaxedDupLossAccuracyAveragesList)
-        totalStrictDupInvAccuracyAveragesList.append(strictDupInvAccuracyAveragesList)
-        totalRelaxedDupInvAccuracyAveragesList.append(relaxedDupInvAccuracyAveragesList)
-        totalStrictDupTransAccuracyAveragesList.append(strictDupTransAccuracyAveragesList)
-        totalRelaxedDupTransAccuracyAveragesList.append(relaxedDupTransAccuracyAveragesList)
-        totalStrictDupSubAccuracyAveragesList.append(strictDupSubAccuracyAveragesList)
-        totalRelaxedDupSubAccuracyAveragesList.append(relaxedDupSubAccuracyAveragesList)
+        if runDupLoss:
+            totalStrictDupDupAccuracyAveragesList.append(strictDupDupAccuracyAveragesList)
+            totalRelaxedDupDupAccuracyAveragesList.append(relaxedDupDupAccuracyAveragesList)
+            totalStrictDupLossAccuracyAveragesList.append(strictDupLossAccuracyAveragesList)
+            totalRelaxedDupLossAccuracyAveragesList.append(relaxedDupLossAccuracyAveragesList)
+            totalStrictDupInvAccuracyAveragesList.append(strictDupInvAccuracyAveragesList)
+            totalRelaxedDupInvAccuracyAveragesList.append(relaxedDupInvAccuracyAveragesList)
+            totalStrictDupTransAccuracyAveragesList.append(strictDupTransAccuracyAveragesList)
+            totalRelaxedDupTransAccuracyAveragesList.append(relaxedDupTransAccuracyAveragesList)
+            totalStrictDupSubAccuracyAveragesList.append(strictDupSubAccuracyAveragesList)
+            totalRelaxedDupSubAccuracyAveragesList.append(relaxedDupSubAccuracyAveragesList)
         
         totalStrictAppNeighbourDupAccuracyAveragesList.append(strictAppNeighbourDupAccuracyAveragesList)
         totalRelaxedAppNeighbourDupAccuracyAveragesList.append(relaxedAppNeighbourDupAccuracyAveragesList)
@@ -821,7 +851,8 @@ def main():
         
         totalAppFMeasureList.append(appFMeasureList)
         totalOrthoFMeasureList.append(orthoFMeasureList)
-        totalDupFMeasureList.append(dupFMeasureList)
+        if runDupLoss:
+            totalDupFMeasureList.append(dupFMeasureList)
         
         totalAppNeighbourFMeasureList.append(appNeighbourFMeasureList)
         totalOrthoNeighbourFMeasureList.append(orthoFMeasureList)
@@ -854,7 +885,8 @@ def main():
     outputData(totalEventsAppAveragesList, testFolder + "appEventsData.txt")
     outputData(totalEventsGenAveragesList, testFolder + "genEventsData.txt")
     outputData(totalEventsOrthoAveragesList, testFolder + "orthoEventsData.txt")
-    outputData(totalEventsDupAveragesList, testFolder + "dupEventsData.txt")
+    if runDupLoss:
+        outputData(totalEventsDupAveragesList, testFolder + "dupEventsData.txt")
     
     outputData(totalEventsAppNeighbourAveragesList, testFolder + "appNeighbourEventsData.txt")
     outputData(totalEventsOrthoNeighbourAveragesList, testFolder + "orthoNeighbourEventsData.txt")
@@ -863,8 +895,9 @@ def main():
     outputData(totalRelaxedAppAccuracyAveragesList, testFolder + "relaxedAppAccuracyData.txt")
     outputData(totalStrictOrthoAccuracyAveragesList, testFolder + "strictOrthoAccuracyData.txt")
     outputData(totalRelaxedOrthoAccuracyAveragesList, testFolder + "relaxedOrthoAccuracyData.txt")
-    outputData(totalStrictDupAccuracyAveragesList, testFolder + "strictDupAccuracyData.txt")
-    outputData(totalRelaxedDupAccuracyAveragesList, testFolder + "relaxedDupAccuracyData.txt")
+    if runDupLoss:
+        outputData(totalStrictDupAccuracyAveragesList, testFolder + "strictDupAccuracyData.txt")
+        outputData(totalRelaxedDupAccuracyAveragesList, testFolder + "relaxedDupAccuracyData.txt")
     
     outputData(totalStrictAppNeighbourAccuracyAveragesList, testFolder + "strictAppNeighbourAccuracyData.txt")
     outputData(totalRelaxedAppNeighbourAccuracyAveragesList, testFolder + "relaxedAppNeighbourAccuracyData.txt")
@@ -893,16 +926,17 @@ def main():
     outputData(totalStrictOrthoSubAccuracyAveragesList, testFolder + "strictOrthoSubAccuracyData.txt")
     outputData(totalRelaxedOrthoSubAccuracyAveragesList, testFolder + "relaxedOrthoSubAccuracyData.txt")
     
-    outputData(totalStrictDupDupAccuracyAveragesList, testFolder + "strictDupDupAccuracyData.txt")
-    outputData(totalRelaxedDupDupAccuracyAveragesList, testFolder + "relaxedDupDupAccuracyData.txt")
-    outputData(totalStrictDupLossAccuracyAveragesList, testFolder + "strictDupLossAccuracyData.txt")
-    outputData(totalRelaxedDupLossAccuracyAveragesList, testFolder + "relaxedDupLossAccuracyData.txt")
-    outputData(totalStrictDupInvAccuracyAveragesList, testFolder + "strictDupInvAccuracyData.txt")
-    outputData(totalRelaxedDupInvAccuracyAveragesList, testFolder + "relaxedDupInvAccuracyData.txt")
-    outputData(totalStrictDupTransAccuracyAveragesList, testFolder + "strictDupTransAccuracyData.txt")
-    outputData(totalRelaxedDupTransAccuracyAveragesList, testFolder + "relaxedDupTransAccuracyData.txt")
-    outputData(totalStrictDupSubAccuracyAveragesList, testFolder + "strictDupSubAccuracyData.txt")
-    outputData(totalRelaxedDupSubAccuracyAveragesList, testFolder + "relaxedDupSubAccuracyData.txt")
+    if runDupLoss:
+        outputData(totalStrictDupDupAccuracyAveragesList, testFolder + "strictDupDupAccuracyData.txt")
+        outputData(totalRelaxedDupDupAccuracyAveragesList, testFolder + "relaxedDupDupAccuracyData.txt")
+        outputData(totalStrictDupLossAccuracyAveragesList, testFolder + "strictDupLossAccuracyData.txt")
+        outputData(totalRelaxedDupLossAccuracyAveragesList, testFolder + "relaxedDupLossAccuracyData.txt")
+        outputData(totalStrictDupInvAccuracyAveragesList, testFolder + "strictDupInvAccuracyData.txt")
+        outputData(totalRelaxedDupInvAccuracyAveragesList, testFolder + "relaxedDupInvAccuracyData.txt")
+        outputData(totalStrictDupTransAccuracyAveragesList, testFolder + "strictDupTransAccuracyData.txt")
+        outputData(totalRelaxedDupTransAccuracyAveragesList, testFolder + "relaxedDupTransAccuracyData.txt")
+        outputData(totalStrictDupSubAccuracyAveragesList, testFolder + "strictDupSubAccuracyData.txt")
+        outputData(totalRelaxedDupSubAccuracyAveragesList, testFolder + "relaxedDupSubAccuracyData.txt")
     
     outputData(totalStrictAppNeighbourDupAccuracyAveragesList, testFolder + "strictAppNeighbourDupAccuracyData.txt")
     outputData(totalRelaxedAppNeighbourDupAccuracyAveragesList, testFolder + "relaxedAppNeighbourDupAccuracyData.txt")
@@ -928,7 +962,8 @@ def main():
     
     outputData(totalAppFMeasureList, testFolder + "appFMeasureData.txt")
     outputData(totalOrthoFMeasureList, testFolder + "orthoFMeasureData.txt")
-    outputData(totalDupFMeasureList, testFolder + "dupFMeasureData.txt")
+    if runDupLoss:
+        outputData(totalDupFMeasureList, testFolder + "dupFMeasureData.txt")
     
     outputData(totalAppNeighbourFMeasureList, testFolder + "appNeighbourFMeasureData.txt")
     outputData(totalOrthoNeighbourFMeasureList, testFolder + "orthoNeighbourFMeasureData.txt")
@@ -998,7 +1033,10 @@ def plotRuntimes(cherryTree, neighbour, xAxisTitle, xAxis):
     if cherryTree:
         orthoTotalRuntimes = readDataFile(testFolder + "/OrthoRuntimes.txt")
         
-        dupTotalRuntimes = readDataFile(testFolder + "/DuplossRuntimes.txt")
+        if runDupLoss:
+            dupTotalRuntimes = readDataFile(testFolder + "/DuplossRuntimes.txt")
+        else:
+            dupTotalRuntimes = None
 
         if neighbour:
             appNeighbourTotalRuntimes = readDataFile(testFolder + "/AppNeighbourRuntimes.txt")
@@ -1032,13 +1070,23 @@ def plotEventSizeData(cherryTree, neighbour, xAxisTitle, xAxis):
         orthoMaxSizes = readDataFile(testFolder + "/ortho-EventMaxData.txt")
         orthoMedianSizes = readDataFile(testFolder + "/ortho-EventMedianData.txt")
         
-        dupEventSizes = readDataFile(testFolder + "/dup-EventSizeData.txt")
-        dupNumEvents = readDataFile(testFolder + "/dup-EventCountData.txt")
-        dupAvgEventSizes = calculateSizeAverages(dupEventSizes, dupNumEvents)
-        
-        dupMinSizes = readDataFile(testFolder + "/dup-EventMinData.txt")
-        dupMaxSizes = readDataFile(testFolder + "/dup-EventMaxData.txt")
-        dupMedianSizes = readDataFile(testFolder + "/dup-EventMedianData.txt")
+        if runDupLoss:
+            dupEventSizes = readDataFile(testFolder + "/dup-EventSizeData.txt")
+            dupNumEvents = readDataFile(testFolder + "/dup-EventCountData.txt")
+            dupAvgEventSizes = calculateSizeAverages(dupEventSizes, dupNumEvents)
+            
+            dupMinSizes = readDataFile(testFolder + "/dup-EventMinData.txt")
+            dupMaxSizes = readDataFile(testFolder + "/dup-EventMaxData.txt")
+            dupMedianSizes = readDataFile(testFolder + "/dup-EventMedianData.txt")
+        else:
+            dupEventSizes = None
+            dupNumEvents = None
+            dupAvgEventSizes = None
+            
+            dupMinSizes = None
+            dupMaxSizes = None
+            dupMedianSizes = None
+
         if neighbour:
             appNeighbourEventSizes = readDataFile(testFolder + "/appNeighbour-EventSizeData.txt")
             appNeighbourNumEvents = readDataFile(testFolder + "/appNeighbour-EventCountData.txt")
@@ -1223,20 +1271,20 @@ def graphData(graphType, totalAverages, xAxisTitle, xAxis, totalAverages2 = None
         line3, = plt.plot(xAxis, averages3, 'g+-', label='OrthoAlign')
         labels.append(line3)
         
-        
-    if totalAverages4 is not None:
-        averages4 = []
-        if printToConsole:
-            print totalAverages4
-        for averagesList in totalAverages4:
-            currentSum = 0.0    
-            for average in averagesList:
-                currentSum += average
-            
-            average = currentSum / len(averagesList)
-            averages4.append(average)
-        line4, = plt.plot(xAxis, averages4, 'mx-', label='DupLoss')
-        labels.append(line4)
+    if runDupLoss:
+        if totalAverages4 is not None:
+            averages4 = []
+            if printToConsole:
+                print totalAverages4
+            for averagesList in totalAverages4:
+                currentSum = 0.0    
+                for average in averagesList:
+                    currentSum += average
+                
+                average = currentSum / len(averagesList)
+                averages4.append(average)
+            line4, = plt.plot(xAxis, averages4, 'mx-', label='DupLoss')
+            labels.append(line4)
         
     if totalAverages5 is not None:
         averages5 = []

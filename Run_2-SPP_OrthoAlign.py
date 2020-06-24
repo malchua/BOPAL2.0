@@ -79,22 +79,26 @@ def getCostAndAncestorFromOutFile(outfile):
 ##
 if __name__ == '__main__':
 
-    usage = "usage: Run_2-SPP_OrthoAlign -hf genome1 genome2 destinationFolderName\n"+\
+    usage = "usage: Run_2-SPP_OrthoAlign -hfd genome1 genome2 destinationFolderName\n"+\
             " -f genome1 and genome2 are filenames instead of genome strings.\n"\
             " -h print this message.\n"\
+            " -d run DupLoss.\n"\
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "fh")
+        opts, args = getopt.getopt(sys.argv[1:], "fhd")
     except getopt.GetoptError:
         sys.exit(usage)
 
     input_files = False
+    runDupLoss = False
     
     for (opt,val) in opts:
         if(opt == "-h"):
             sys.exit(usage)
         if(opt == "-f"):
             input_files = True
+        if(opt == "-d"):
+            runDupLoss = True
     
     if len(args) != 3:
         sys.exit(usage)
@@ -132,19 +136,22 @@ if __name__ == '__main__':
     orthoAlignStartTime = time.time()
     os.system(command)
     orthoAlignRunTime = time.time() - orthoAlignStartTime
+
+    orthoCost, orthoAncestor = getCostAndAncestorFromOutFile(orthoAlignOutFile)
     
     #Running Duploss
-    command = "python " + DUPLOSS_PATH + DUPLOSS_EXEC + " -eiqdt " + genome1 + " " + genome2 + " > " + duplossOutFile
-    duplossStartTime = time.time()
-    os.system(command)
-    duplossRunTime = time.time() - duplossStartTime
-    
-    orthoCost, orthoAncestor = getCostAndAncestorFromOutFile(orthoAlignOutFile)
-    duplossCost, duplossAncestor = getCostAndAncestorFromOutFile(duplossOutFile)
+    if runDupLoss:
+        command = "python " + DUPLOSS_PATH + DUPLOSS_EXEC + " -eiqdt " + genome1 + " " + genome2 + " > " + duplossOutFile
+        duplossStartTime = time.time()
+        os.system(command)
+        duplossRunTime = time.time() - duplossStartTime
+        
+        duplossCost, duplossAncestor = getCostAndAncestorFromOutFile(duplossOutFile)
     
     if printToConsole:
-        print "Duploss cost = " + str(duplossCost)
-        print "Duploss ancestor =    " + duplossAncestor
+        if runDupLoss:
+            print "Duploss cost = " + str(duplossCost)
+            print "Duploss ancestor =    " + duplossAncestor
         print "OrthoAlign cost = " + str(orthoCost)
         print "OrthoAlign ancestor = " + orthoAncestor
         
@@ -153,5 +160,6 @@ if __name__ == '__main__':
     with open(runtimePath + "/OrthoRuntimes.txt", "a+") as runtimeFile:
         runtimeFile.write("%f " % (orthoAlignRunTime))
         
-    with open(runtimePath + "/DuplossRuntimes.txt", "a+") as runtimeFile:
-        runtimeFile.write("%f " % (duplossRunTime))
+    if runDupLoss:
+        with open(runtimePath + "/DuplossRuntimes.txt", "a+") as runtimeFile:
+            runtimeFile.write("%f " % (duplossRunTime))
